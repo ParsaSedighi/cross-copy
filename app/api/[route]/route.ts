@@ -33,8 +33,14 @@ export async function POST(request: NextRequest, { params }: { params: RoutePara
   const body = await request.json()
 
   try {
-    const newData = await prisma.textbox.create({
-      data: {
+    const newData = await prisma.textbox.upsert({
+      where: {
+        route
+      },
+      update: {
+        text: body
+      },
+      create: {
         route,
         text: body
       }

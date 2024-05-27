@@ -1,7 +1,9 @@
 import dynamic from 'next/dynamic';
-const ModeToggle = dynamic(() => import('@/components/modeToggle'), {
-  ssr: false,
-});
+// const ModeToggle = dynamic(() => import('@/components/modeToggle'), {
+//   ssr: true,
+// });
+
+import ModeToggle from '@/components/modeToggle';
 
 import { Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
