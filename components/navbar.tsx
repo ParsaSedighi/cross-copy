@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 export default function Navbar() {
   return (
     <nav className="mt-8">
-      <div className="flex items-center justify-between mx-4">
+      <div className="flex items-center justify-between mx-4 md:mx-16">
         <Button variant="outline" size="icon">
           <Github />
         </Button>
