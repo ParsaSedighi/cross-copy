@@ -4,6 +4,8 @@ import randomstring from 'randomstring';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+export const dynamic = 'force-dynamic';
+
 async function getAllRoutes() {
   const texts = await prisma.textbox.findMany();
   return texts;
@@ -17,7 +19,7 @@ export default async function Home() {
     });
   };
   const routes = await getAllRoutes();
-  var route = generate();
+  let route = generate();
   while (routes.some((r) => r.route === route)) {
     route = generate();
   }
