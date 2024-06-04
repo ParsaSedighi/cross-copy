@@ -16,7 +16,6 @@ export async function GET(request: NextRequest, { params }: { params: RouteParam
         route,
       },
     });
-    console.log(data)
     return NextResponse.json({ data });
   } catch (error) {
     return NextResponse.json(
@@ -46,7 +45,6 @@ export async function POST(request: NextRequest, { params }: { params: RoutePara
       }
     }
     )
-    console.log(newData)
     return NextResponse.json({ newData });
   } catch (error) {
     return NextResponse.json(
