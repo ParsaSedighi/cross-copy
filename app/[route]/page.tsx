@@ -90,7 +90,7 @@ export default function Home() {
           onClick={handleCopy}>
           {buttonText}
         </Button>
-        (<Dialog>
+        <Dialog>
           <DialogTrigger asChild>
             <Button className="text-lg" size="lg" onClick={handleShare}>
               Share
@@ -115,7 +115,7 @@ export default function Home() {
               </DialogClose>
             </DialogFooter>
           </DialogContent>
-        </Dialog>)
+        </Dialog>
       </div>
     </main>
   );
