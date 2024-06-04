@@ -15,6 +15,8 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
+import Navbar from '@/components/navbar';
+import { useMediaQuery } from 'usehooks-ts';
 
 export default function Home() {
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -22,6 +24,8 @@ export default function Home() {
   const [taText, setTaText] = useState('');
   const [error, setError] = useState(null);
   const { route } = useParams();
+  // const isDesktop = useMediaQuery("(min-width: 768px)") // TODO
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,16 +71,18 @@ export default function Home() {
     }
   };
 
+
   return (
-    <main className="mt-7 h-full mx-4 md:mx-16">
+    <main className="mx-4 md:mx-32 lg:mx-64 grid grid-rows-4">
+      <Navbar className='self-center'/>
       <Textarea
-        className="text-lg resize-none h-4/6 placeholder:text-lg"
+        className="text-lg resize-none placeholder:text-lg row-span-2 h-80 md:h-72 self-center"
         value={taText}
         ref={textRef}
         onChange={() => setTaText(textRef.current?.value!)}
         placeholder="Paste your text here"
       />
-      <div className="flex justify-around md:justify-center md:space-x-32 mt-7 ">
+      <div className="flex justify-around md:justify-center md:space-x-32 items-center">
         <Button
           className="text-lg"
           size="lg"
@@ -84,7 +90,7 @@ export default function Home() {
           onClick={handleCopy}>
           {buttonText}
         </Button>
-        <Dialog>
+        (<Dialog>
           <DialogTrigger asChild>
             <Button className="text-lg" size="lg" onClick={handleShare}>
               Share
@@ -109,7 +115,7 @@ export default function Home() {
               </DialogClose>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog>)
       </div>
     </main>
   );

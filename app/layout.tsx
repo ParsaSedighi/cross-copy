@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 
 import { ThemeProvider } from '@/components/themeProvider';
-import Navbar from '@/components/navbar';
 import { cn } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -19,10 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className="h-screen overflow-hidden">
-      <body className={cn(inter.className, 'h-full')}>
+    <html className='md:h-screen'>
+      <body className={cn(inter.className, 'h-full md:grid-cols-2 md:content-center')}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Navbar />
           {children}
         </ThemeProvider>
       </body>
