@@ -4,7 +4,7 @@ import copy from 'copy-to-clipboard';
 import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -25,17 +25,28 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
+
 import { QRCodeSVG } from 'qrcode.react';
 
 import Navbar from '@/components/navbar';
-import { Copy } from 'lucide-react';
+import { Copy, Import } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Home() {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const [buttonText, setButtonText] = useState('Copy');
   const [taText, setTaText] = useState('');
+  const [value, setValue] = useState('');
   const [error, setError] = useState(null);
   const { route } = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +92,11 @@ export default function Home() {
     }
   };
 
+  const handleSubmit = async () => {
+    if (value) {
+      router.push(`${value}`);
+    }
+  };
   return (
     <main className="mx-4 md:mx-32 lg:mx-64 grid grid-rows-4">
       <Navbar className="self-center" />
@@ -92,13 +108,101 @@ export default function Home() {
         placeholder="Paste your text here"
       />
       <div className="flex justify-around md:justify-center md:space-x-32 items-center">
-        <Button
-          className="text-lg"
-          size="lg"
-          variant="secondary"
-          onClick={handleCopy}>
-          {buttonText}
-        </Button>
+        <div className="hidden md:block">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="text-lg" size="icon" variant="ghost">
+                <Import />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="flex justify-center">
+                  Enter your code here
+                </DialogTitle>
+                <DialogDescription className="flex justify-center">
+                  Characters are case-sensitive
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex justify-center">
+                <InputOTP
+                  maxLength={5}
+                  pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                  value={value}
+                  onChange={(value) => setValue(value)}
+                  inputMode="text"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSubmit();
+                    }
+                  }}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+
+              <DialogFooter className="sm:justify-center">
+                <div className="space-x-8 mt-3">
+                  <Button onClick={handleSubmit}>Submit</Button>
+                </div>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <div className="md:hidden">
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button className="text-lg" size="icon" variant="ghost">
+                <Import />
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Enter your code here</DrawerTitle>
+                <DrawerDescription>
+                  Characters are case-sensitive
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className="flex justify-center">
+                <InputOTP
+                  maxLength={5}
+                  pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                  value={value}
+                  onChange={(value) => setValue(value)}
+                  inputMode="text"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSubmit();
+                    }
+                  }}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+
+              <DrawerFooter>
+                <div className="flex justify-center space-x-8">
+                  <DrawerClose>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                  <Link href={`/${value}`}>
+                    <Button onClick={handleSubmit}>Submit</Button>
+                  </Link>
+                </div>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        </div>
         <div className="hidden md:block">
           <Dialog>
             <DialogTrigger asChild>
@@ -127,13 +231,12 @@ export default function Home() {
                   <Copy className="w-4" />
                 </Button>
               </div>
-              <div className="flex items-center justify-between mx-16 mt-4">
+              <div className="flex items-center justify-between mx-16 my-4">
                 <p className="text-muted-foreground">
                   Or just scan this QRcode:
                 </p>
                 <QRCodeSVG value={`https://crosscopy.ir/${route}`} />
               </div>
-              <DialogFooter className="sm:justify-center"></DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
@@ -179,6 +282,13 @@ export default function Home() {
             </DrawerContent>
           </Drawer>
         </div>
+        <Button
+          className="text-lg"
+          size="icon"
+          variant="ghost"
+          onClick={handleCopy}>
+          <Copy />
+        </Button>
       </div>
     </main>
   );
