@@ -15,8 +15,20 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
+import { QRCodeSVG } from 'qrcode.react';
+
 import Navbar from '@/components/navbar';
-import { useMediaQuery } from 'usehooks-ts';
+import { Copy } from 'lucide-react';
 
 export default function Home() {
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -24,8 +36,6 @@ export default function Home() {
   const [taText, setTaText] = useState('');
   const [error, setError] = useState(null);
   const { route } = useParams();
-  // const isDesktop = useMediaQuery("(min-width: 768px)") // TODO
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,10 +81,9 @@ export default function Home() {
     }
   };
 
-
   return (
     <main className="mx-4 md:mx-32 lg:mx-64 grid grid-rows-4">
-      <Navbar className='self-center'/>
+      <Navbar className="self-center" />
       <Textarea
         className="text-lg resize-none placeholder:text-lg row-span-2 h-80 md:h-72 self-center"
         value={taText}
@@ -90,32 +99,86 @@ export default function Home() {
           onClick={handleCopy}>
           {buttonText}
         </Button>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="text-lg" size="lg" onClick={handleShare}>
-              Share
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              {/* // TODO add Input OTP and qrcode */}
-              <DialogTitle></DialogTitle>
-              <DialogDescription>
-                Copy your text from any device using this
-              </DialogDescription>
-            </DialogHeader>
-            <h1 className="flex items-center justify-center text-4xl">
-              <p>{route}</p>
-            </h1>
-            <DialogFooter className="sm:justify-start">
-              <DialogClose asChild>
-                <Button type="button" variant="secondary">
-                  Close
+        <div className="hidden md:block">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="text-lg" size="lg" onClick={handleShare}>
+                Share
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogDescription>
+                  Copy your text from any device using this url:
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-3xl">
+                  <span className="text-2xl">crosscopy.ir/</span>
+                  {route}
+                </p>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => {
+                    copy(`https://crosscopy.ir/${route}`);
+                  }}>
+                  <Copy className="w-4" />
                 </Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              </div>
+              <div className="flex items-center justify-between mx-16 mt-4">
+                <p className="text-muted-foreground">
+                  Or just scan this QRcode:
+                </p>
+                <QRCodeSVG value={`https://crosscopy.ir/${route}`} />
+              </div>
+              <DialogFooter className="sm:justify-center"></DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <div className="md:hidden">
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button className="text-lg" size="lg" onClick={handleShare}>
+                Share
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DialogDescription className="">
+                  Copy your text from any device using this url
+                </DialogDescription>
+              </DrawerHeader>
+              <div className="flex items-center justify-between mx-8 mt-2">
+                <p className="text-3xl">
+                  <span className="text-2xl">crosscopy.ir/</span>
+                  {route}
+                </p>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => {
+                    copy(`https://crosscopy.ir/${route}`);
+                  }}>
+                  <Copy className="w-4" />
+                </Button>
+              </div>
+              <div className="flex items-center justify-between mx-16 my-8">
+                <p className="text-muted-foreground">
+                  Or just scan this QRcode:
+                </p>
+                <QRCodeSVG value={`https://crosscopy.ir/${route}`} />
+              </div>
+              <DrawerFooter>
+                <DrawerClose>
+                  <Button variant="outline">Close</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        </div>
       </div>
     </main>
   );
