@@ -1,10 +1,13 @@
 'use client';
 
-import copy from 'copy-to-clipboard';
 import { useRef, useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+
+import copy from 'copy-to-clipboard';
+import { QRCodeSVG } from 'qrcode.react';
+
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useRouter, useParams } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +16,6 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-  DialogClose,
 } from '@/components/ui/dialog';
 import {
   Drawer,
@@ -28,20 +30,16 @@ import {
 import {
   InputOTP,
   InputOTPGroup,
-  InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 
-import { QRCodeSVG } from 'qrcode.react';
+import { Copy, Import } from 'lucide-react';
 
 import Navbar from '@/components/navbar';
-import { Copy, Import } from 'lucide-react';
-import Link from 'next/link';
 
 export default function Home() {
   const textRef = useRef<HTMLTextAreaElement>(null);
-  const [buttonText, setButtonText] = useState('Copy');
   const [taText, setTaText] = useState('');
   const [value, setValue] = useState('');
   const [error, setError] = useState(null);
@@ -68,10 +66,6 @@ export default function Home() {
   const handleCopy = () => {
     if (textRef) {
       copy(textRef.current?.value!);
-      setButtonText('Copied!');
-      setTimeout(() => {
-        setButtonText('Copy');
-      }, 2000);
     }
   };
 
@@ -107,7 +101,7 @@ export default function Home() {
         onChange={() => setTaText(textRef.current?.value!)}
         placeholder="Paste your text here"
       />
-      <div className="flex justify-around md:justify-center md:space-x-32 items-center">
+      <div className="flex justify-around md:justify-center md:space-x-20 items-center">
         <div className="hidden md:block">
           <Dialog>
             <DialogTrigger asChild>
@@ -195,9 +189,7 @@ export default function Home() {
                   <DrawerClose>
                     <Button variant="outline">Cancel</Button>
                   </DrawerClose>
-                  <Link href={`/${value}`}>
-                    <Button onClick={handleSubmit}>Submit</Button>
-                  </Link>
+                  <Button onClick={handleSubmit}>Submit</Button>
                 </div>
               </DrawerFooter>
             </DrawerContent>
