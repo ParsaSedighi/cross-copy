@@ -46,6 +46,8 @@ export default function Home() {
   const { route } = useParams();
   const router = useRouter();
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -218,7 +220,7 @@ export default function Home() {
                   size="icon"
                   variant="ghost"
                   onClick={() => {
-                    copy(`https://crosscopy.ir/${route}`);
+                    copy(`${baseUrl}/${route}`);
                   }}>
                   <Copy className="w-4" />
                 </Button>
@@ -227,7 +229,7 @@ export default function Home() {
                 <p className="text-muted-foreground">
                   Or just scan this QRcode:
                 </p>
-                <QRCodeSVG value={`https://crosscopy.ir/${route}`} />
+                <QRCodeSVG value={`${baseUrl}/${route}`} />
               </div>
             </DialogContent>
           </Dialog>
@@ -255,7 +257,7 @@ export default function Home() {
                   size="icon"
                   variant="ghost"
                   onClick={() => {
-                    copy(`https://crosscopy.ir/${route}`);
+                    copy(`${baseUrl}/${route}`);
                   }}>
                   <Copy className="w-4" />
                 </Button>
@@ -264,7 +266,7 @@ export default function Home() {
                 <p className="text-muted-foreground">
                   Or just scan this QRcode:
                 </p>
-                <QRCodeSVG value={`https://crosscopy.ir/${route}`} />
+                <QRCodeSVG value={`${baseUrl}/${route}`} />
               </div>
               <DrawerFooter>
                 <DrawerClose>
