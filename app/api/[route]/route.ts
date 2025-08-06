@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { db } from '@/lib/db';
 
 interface RouteParams {
   route: string;
@@ -11,7 +9,7 @@ export async function GET(request: NextRequest, { params }: { params: RouteParam
   const { route } = params
 
   try {
-    const data = await prisma.textbox.findFirst({
+    const data = await db.textbox.findFirst({
       where: {
         route,
       },
@@ -23,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: RouteParam
       { status: 500 }
     );
   } finally {
-    await prisma.$disconnect();
+    await db.$disconnect();
   }
 }
 
@@ -32,7 +30,7 @@ export async function POST(request: NextRequest, { params }: { params: RoutePara
   const body = await request.json()
 
   try {
-    const newData = await prisma.textbox.upsert({
+    const newData = await db.textbox.upsert({
       where: {
         route
       },
@@ -52,6 +50,6 @@ export async function POST(request: NextRequest, { params }: { params: RoutePara
       { status: 500 }
     );
   } finally {
-    await prisma.$disconnect();
+    await db.$disconnect();
   }
 }

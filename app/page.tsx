@@ -24,5 +24,9 @@ export default async function Home() {
     route = generate();
   }
 
-  redirect(`${route}`);
+  return (
+    <h1>Hello</h1>
+  )
+
+  // redirect(`${route}`);
 }

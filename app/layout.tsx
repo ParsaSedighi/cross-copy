@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className='md:h-screen'>
-      <body className={cn(inter.className, 'h-full md:grid-cols-2 md:content-center')}>
+    <html>
+      <body className={cn(inter.className)}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
