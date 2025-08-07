@@ -1,17 +1,22 @@
 import { redirect } from 'next/navigation';
 import randomstring from 'randomstring';
-
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { auth } from "@/lib/auth/auth";
+import { headers } from "next/headers";
+import { db } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
 async function getAllRoutes() {
-  const texts = await prisma.textbox.findMany();
+  const texts = await db.textbox.findMany();
   return texts;
 }
 
 export default async function Home() {
+
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
   const generate = () => {
     return randomstring.generate({
       length: 5,
@@ -24,8 +29,12 @@ export default async function Home() {
     route = generate();
   }
 
+
+  if (!session) {
+    redirect('/auth/Signup')
+  }
   return (
-    <h1>Hello</h1>
+    <div>Hello</div>
   )
 
   // redirect(`${route}`);

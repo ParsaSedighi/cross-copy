@@ -4,6 +4,7 @@ import './globals.css';
 
 import { ThemeProvider } from '@/components/themeProvider';
 import { cn } from '@/lib/utils';
+import { Toaster } from '@/components/ui/sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,10 +19,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html>
+    <html suppressHydrationWarning>
       <body className={cn(inter.className)}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <main>
+            {children}
+            <Toaster />
+          </main>
         </ThemeProvider>
       </body>
     </html>
