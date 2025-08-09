@@ -5,7 +5,8 @@ interface RouteParams {
   route: string;
 }
 
-export async function GET(request: NextRequest, { params }: { params: RouteParams }) {
+export async function GET(request: NextRequest, props: { params: Promise<RouteParams> }) {
+  const params = await props.params;
   const { route } = params
 
   try {
@@ -25,7 +26,8 @@ export async function GET(request: NextRequest, { params }: { params: RouteParam
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: RouteParams }) {
+export async function POST(request: NextRequest, props: { params: Promise<RouteParams> }) {
+  const params = await props.params;
   const { route } = params
   const body = await request.json()
 

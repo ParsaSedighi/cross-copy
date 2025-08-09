@@ -2,8 +2,8 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFormState, useFormStatus } from 'react-dom';
-import { useEffect } from 'react';
+import { useFormStatus } from 'react-dom';
+import { useEffect, useActionState } from 'react';
 
 import { signupSchema, type SignupSchema } from '@/lib/schemas';
 import { signup, type FormState } from '@/app/actions';
@@ -32,7 +32,7 @@ function SubmitButton() {
 
 export function SignupForm({ className }: { className?: string }) {
     const initialState: FormState = { message: '', success: false };
-    const [state, formAction] = useFormState(signup, initialState);
+    const [state, formAction] = useActionState(signup, initialState);
 
     const form = useForm<SignupSchema>({
         resolver: zodResolver(signupSchema),
