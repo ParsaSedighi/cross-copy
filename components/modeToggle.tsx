@@ -9,6 +9,11 @@ import { cn } from '@/lib/utils';
 
 export default function ModeToggle({ className }: any) {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleHandler = () => {
     if (theme === 'light') {
@@ -17,18 +22,30 @@ export default function ModeToggle({ className }: any) {
       setTheme('light');
     }
   };
+
+  if (!mounted) {
+    return (
+      <Button
+        className={cn('', className)}
+        variant="outline"
+        size="icon"
+        aria-label="Toggle theme"
+      />
+    );
+  }
+
   return (
     <Button
       className={cn('', className)}
       variant="outline"
       size="icon"
-      onClick={toggleHandler}>
+      onClick={toggleHandler}
+    >
       {theme === 'light' ? (
         <Moon className="h-[1.5rem] w-[1.5rem] transition-all" />
       ) : (
         <Sun className="h-[1.5rem] w-[1.5rem] transition-all" />
       )}
-
       <span className="sr-only">Toggle theme</span>
     </Button>
   );
