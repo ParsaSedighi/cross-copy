@@ -1,10 +1,10 @@
-import { redirect } from 'next/navigation';
-import randomstring from 'randomstring';
+import { redirect } from "next/navigation";
+import randomstring from "randomstring";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
-import { db } from '@/lib/db';
+import { db } from "@/lib/db";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 async function getAllRoutes() {
   const texts = await db.textbox.findMany();
@@ -12,15 +12,14 @@ async function getAllRoutes() {
 }
 
 export default async function Home() {
-
   const session = await auth.api.getSession({
-    headers: await headers()
-  })
+    headers: await headers(),
+  });
 
   const generate = () => {
     return randomstring.generate({
       length: 5,
-      charset: 'alphanumeric',
+      charset: "alphanumeric",
     });
   };
   const routes = await getAllRoutes();
@@ -29,13 +28,10 @@ export default async function Home() {
     route = generate();
   }
 
-
   if (!session) {
-    redirect('/auth/Signup')
+    redirect("/auth/Signup");
   }
-  return (
-    <div>Hello</div>
-  )
+  return <div>Hello {session.user.name}!</div>;
 
   // redirect(`${route}`);
 }

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const signupSchema = z.object({
-    email: z.email({ message: 'Please enter a valid email address.' }),
     name: z.string().min(2, { message: 'Name must be at least 2 characters long.' }),
+    email: z.email({ message: 'Please enter a valid email address.' }),
     password: z.string().min(8, { message: "Password must be at least 8 characters long" })
         .refine((val) => /[A-Z]/.test(val), { message: "Must include an uppercase letter" })
         .refine((val) => /[a-z]/.test(val), { message: "Must include a lowercase letter" })
@@ -13,4 +13,11 @@ export const signupSchema = z.object({
     path: ["confirmPassword"]
 })
 
-export type SignupSchema = z.infer<typeof signupSchema>;
+export type SignupZFormState = z.infer<typeof signupSchema>;
+
+export const signinSchema = z.object({
+    email: z.email({ message: 'Please enter a valid email address.' }),
+    password: z.string().min(1, { message: 'Password is required.' })
+})
+
+export type SigninZFormState = z.infer<typeof signinSchema>;

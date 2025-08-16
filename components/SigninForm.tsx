@@ -5,14 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFormStatus } from "react-dom";
 import { useEffect, useActionState } from "react";
 
-import { signupSchema, type SignupZFormState } from "@/lib/schemas";
-import { signup, type SignupFormState } from "@/app/actions";
+import { signinSchema, type SigninZFormState } from "@/lib/schemas";
+import { signin, type SigninFormState } from "@/app/actions";
 
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -20,26 +19,24 @@ function SubmitButton({ className }: { className: string }) {
   const { pending } = useFormStatus();
   return (
     <Button className={className} type="submit" disabled={pending}>
-      {pending ? "Signing Up..." : "Sign Up"}
+      {pending ? "Signing In..." : "Sign In"}
     </Button>
   );
 }
 
-export function SignupForm({ className }: { className?: string }) {
-  const initialState: SignupFormState = { message: "", success: false };
-  const [state, formAction] = useActionState(signup, initialState);
+export function SigninForm({ className }: { className?: string }) {
+  const initialState: SigninFormState = { message: "", success: false };
+  const [state, formAction] = useActionState(signin, initialState);
 
-  const router = useRouter();
-
-  const form = useForm<SignupZFormState>({
-    resolver: zodResolver(signupSchema),
+  const form = useForm<SigninZFormState>({
+    resolver: zodResolver(signinSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
+
+  const router = useRouter();
 
   useEffect(() => {
     if (state.message) {
@@ -56,18 +53,6 @@ export function SignupForm({ className }: { className?: string }) {
     <form
       action={formAction}
       className={cn(className, "w-full md:w-96 space-y-4")}>
-      <div>
-        <Input
-          className="h-11"
-          placeholder="Name"
-          id="name"
-          {...form.register("name")}
-        />
-        <p className="text-sm text-red-500 mt-1">
-          {form.formState.errors.name?.message || state.errors?.name?.[0]}
-        </p>
-      </div>
-
       <div>
         <Input
           className="h-11"
@@ -90,19 +75,6 @@ export function SignupForm({ className }: { className?: string }) {
         <p className="text-sm text-red-500 mt-1">
           {form.formState.errors.password?.message ||
             state.errors?.password?.[0]}
-        </p>
-      </div>
-      <div>
-        <Input
-          className="h-11"
-          placeholder="Confirm Password"
-          id="confirmPassword"
-          type="password"
-          {...form.register("confirmPassword")}
-        />
-        <p className="text-sm text-red-500 mt-1">
-          {form.formState.errors.confirmPassword?.message ||
-            state.errors?.confirmPassword?.[0]}
         </p>
       </div>
       <SubmitButton className="w-full h-11" />

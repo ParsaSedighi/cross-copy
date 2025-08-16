@@ -1,8 +1,9 @@
 "use server";
 
-import { signupSchema } from '@/lib/schemas';
+import { signupSchema, signinSchema } from "@/lib/schemas";
+import { auth } from "@/lib/auth/auth";
 
-export type FormState = {
+export type SignupFormState = {
     message: string;
     errors?: {
         name?: string[];
@@ -13,39 +14,84 @@ export type FormState = {
     success: boolean;
 };
 
+export type SigninFormState = {
+    message: string;
+    errors?: {
+        email?: string[];
+        password?: string[];
+    };
+    success: boolean;
+};
+
 export async function signup(
-    prevState: FormState,
+    prevState: SignupFormState,
     formData: FormData
-): Promise<FormState> {
+): Promise<SignupFormState> {
     const rawData = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        password: formData.get('password'),
-        confirmPassword: formData.get('confirmPassword')
+        name: formData.get("name"),
+        email: formData.get("email"),
+        password: formData.get("password"),
+        confirmPassword: formData.get("confirmPassword"),
     };
 
     const validatedFields = signupSchema.safeParse(rawData);
 
     if (!validatedFields.success) {
         return {
-            message: 'Form submission failed. Please check the errors below.',
+            message: "Form submission failed. Please check the errors below fields.",
             errors: validatedFields.error.flatten().fieldErrors,
             success: false,
         };
     }
 
     try {
-        console.log('Signing User:', validatedFields.data);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await auth.api.signUpEmail({
+            body: validatedFields.data,
+        });
 
         return {
             message: `Thank you for signing up, ${validatedFields.data.name}!`,
             success: true,
         };
-
     } catch (e) {
         return {
-            message: 'An unexpected error occurred. Please try again.',
+            message: "An unexpected error occurred. Please try again.",
+            success: false,
+        };
+    }
+}
+
+export async function signin(
+    prevState: SigninFormState,
+    formData: FormData
+): Promise<SigninFormState> {
+    const rawData = {
+        email: formData.get("email"),
+        password: formData.get("password"),
+    }
+
+    const validatedFields = signinSchema.safeParse(rawData);
+
+    if (!validatedFields.success) {
+        return {
+            message: "Form submission failed. Please check the errors below.",
+            errors: validatedFields.error.flatten().fieldErrors,
+            success: false,
+        };
+    }
+
+    try {
+        await auth.api.signInEmail({
+            body: validatedFields.data,
+        });
+
+        return {
+            message: `Welcome back!`,
+            success: true,
+        };
+    } catch (e) {
+        return {
+            message: "An unexpected error occurred. Please try again.",
             success: false,
         };
     }
