@@ -22,6 +22,7 @@
     "copy-to-clipboard": "^3.3.3",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.379.0",
+    "motion": "^12.23.12",
     "next": "15.4.6",
     "next-themes": "^0.3.0",
     "qrcode.react": "^3.1.0",

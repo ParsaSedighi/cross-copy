@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import * as React from "react";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export default function ModeToggle({ className }: any) {
+export default function ModeToggle({
+  className,
+  iconSize,
+}: {
+  className?: string;
+  iconSize?: string;
+}) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -16,17 +22,17 @@ export default function ModeToggle({ className }: any) {
   }, []);
 
   const toggleHandler = () => {
-    if (theme === 'light') {
-      setTheme('dark');
+    if (theme === "light") {
+      setTheme("dark");
     } else {
-      setTheme('light');
+      setTheme("light");
     }
   };
 
   if (!mounted) {
     return (
       <Button
-        className={cn('', className)}
+        className={cn("", className)}
         variant="outline"
         size="icon"
         aria-label="Toggle theme"
@@ -36,15 +42,14 @@ export default function ModeToggle({ className }: any) {
 
   return (
     <Button
-      className={cn('', className)}
+      className={cn("", className)}
       variant="outline"
       size="icon"
-      onClick={toggleHandler}
-    >
-      {theme === 'light' ? (
-        <Moon className="h-[1.5rem] w-[1.5rem] transition-all" />
+      onClick={toggleHandler}>
+      {theme === "light" ? (
+        <Moon size={iconSize} className="transition-all" />
       ) : (
-        <Sun className="h-[1.5rem] w-[1.5rem] transition-all" />
+        <Sun size={iconSize} className="transition-all" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>
