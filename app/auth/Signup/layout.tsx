@@ -13,8 +13,8 @@ export default function SignupPageLayout({
         <CardHeader>
           <div className="flex justify-between items-center text-secondary-foreground">
             <ModeToggle />
-            <div className="flex items-center space-x-4">
-              <p className="text-sm">Already have an account?</p>
+            <div className="flex items-center space-x-1 lg:space-x-4">
+              <p className="text-[10px] lg:text-sm">Already have an account?</p>
               <Link href="/auth/Signin">
                 <Button variant="outline">Sign in</Button>
               </Link>
