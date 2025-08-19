@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 import { TypewriterTwoText } from "./typewriterTwoText";
 import { useEffect, useState } from "react";
 
-const MotionButton = motion(Button);
+const MotionButton = motion.create(Button);
 
 export default function Navbar({
   className,
