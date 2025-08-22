@@ -7,7 +7,21 @@ import { Edit, Trash } from "lucide-react";
 
 import type { Paste } from "@prisma/client";
 
+import { useTransition } from "react";
+import { deletePaste } from "@/app/actions";
+
 export default function TextCard({ paste }: { paste: Paste }) {
+  const [isPending, startTransition] = useTransition();
+
+  const deleteHandler = () => {
+    startTransition(async () => {
+      const result = await deletePaste(paste.id, paste.userId);
+
+      if (result?.error) console.error(`Error: ${result.error}: ${result.err}`);
+      else console.log(`Success: ${result.success}`);
+    });
+  };
+
   return (
     <li className="flex space-x-4">
       <Card className="w-full pt-2 px-4">
@@ -17,7 +31,7 @@ export default function TextCard({ paste }: { paste: Paste }) {
         <Button variant="outline" size="icon">
           <Edit />
         </Button>
-        <Button variant="outline" size="icon">
+        <Button onClick={deleteHandler} variant="outline" size="icon">
           <Trash />
         </Button>
       </div>

@@ -107,16 +107,34 @@ export async function paste(text: string) {
     if (!text || typeof text !== 'string' || text.trim() === '') return { error: 'Invalid text provided.' };
 
     try {
-        const response = await db.paste.create({
+        await db.paste.create({
             data: {
                 text,
                 userId: session.user.id,
             }
         })
-        console.log('Saving to DB:', response);
-    } catch (e) {
-        console.error("Unexpected error occurred: ", e)
+        return { success: "Text saved successfully!" };
+    } catch (err) {
+        return { error: "Unexpected error occurred", err }
+    }
+}
+
+export async function deletePaste(textId: string, userId: string) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    if (!session) return { error: "No User" }
+    if (session.user.id !== userId) return { error: "No Permission" }
+
+    try {
+        await db.paste.delete({
+            where: {
+                id: textId
+            }
+        })
+        return { success: "Delete successfull" }
+    } catch (err) {
+        return { error: "Unexpected error occurred", err }
     }
 
-    return { success: `Text saved successfully!` };
 }
