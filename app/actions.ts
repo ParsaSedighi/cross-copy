@@ -2,6 +2,8 @@
 
 import { signupSchema, signinSchema } from "@/lib/schemas";
 import { auth } from "@/lib/auth/auth";
+import { headers } from "next/headers";
+import { db } from "@/lib/db";
 
 export type SignupFormState = {
     message: string;
@@ -95,4 +97,26 @@ export async function signin(
             success: false,
         };
     }
+}
+
+export async function paste(text: string) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    if (!session) return { error: "No User" }
+    if (!text || typeof text !== 'string' || text.trim() === '') return { error: 'Invalid text provided.' };
+
+    try {
+        const response = await db.paste.create({
+            data: {
+                text,
+                userId: session.user.id,
+            }
+        })
+        console.log('Saving to DB:', response);
+    } catch (e) {
+        console.error("Unexpected error occurred: ", e)
+    }
+
+    return { success: `Text saved successfully!` };
 }

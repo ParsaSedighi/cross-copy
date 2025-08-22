@@ -1,10 +1,30 @@
-import { Textarea } from "@/components/ui/textarea";
+import DrawerClient from "@/components/drawerClient";
+import { db } from "@/lib/db";
+import { auth } from "@/lib/auth/auth";
+import { headers } from "next/headers";
+import TextCard from "@/components/textCard";
 
 export default async function Dashboard() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const data = await db.paste.findMany({
+    where: {
+      userId: session!.user.id,
+    },
+  });
+
   return (
-    <main className="h-full flex flex-col items-center m-4">
-      <div className="flex-grow"></div>
-      <Textarea className="h-1/2"></Textarea>
+    <main className="h-full flex flex-col m-4">
+      <div className="flex-grow mt-4">
+        <ul className="space-y-8">
+          {data.map((data) => {
+            return <TextCard key={data.id} paste={data} />;
+          })}
+        </ul>
+      </div>
+      <DrawerClient />
     </main>
   );
 }
