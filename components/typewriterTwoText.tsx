@@ -1,3 +1,4 @@
+// TODO: dynamically choose one or two texts (or more...)
 import { useState, useEffect } from "react";
 import { motion, useAnimationControls } from "motion/react";
 
@@ -5,7 +6,7 @@ export const sentenceVariants = {
   hidden: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
+      staggerChildren: 0.05,
       staggerDirection: -1,
     },
   },
@@ -28,7 +29,7 @@ interface TypewriterProps {
   delay?: number;
   [key: string]: any;
 }
-
+// TODO: Better name!
 export const TypewriterTwoText = ({
   text1,
   text2,
