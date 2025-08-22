@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { signupSchema, type SignupZFormState } from "@/lib/schemas";
-import { signup } from "@/app/actions";
+import { signup } from "@/app/(actions)/actions";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

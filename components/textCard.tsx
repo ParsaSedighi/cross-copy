@@ -7,7 +7,7 @@ import { Edit, Loader2, Trash } from "lucide-react";
 import type { Paste } from "@prisma/client";
 
 import { useTransition } from "react";
-import { deletePaste } from "@/app/pasteActions";
+import { deletePaste } from "@/app/(actions)/pasteActions";
 import { toast } from "sonner";
 
 export default function TextCard({ paste }: { paste: Paste }) {
