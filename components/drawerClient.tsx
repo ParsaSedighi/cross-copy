@@ -14,6 +14,7 @@ import { Plus } from "lucide-react";
 import { Clipboard } from "lucide-react";
 
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 export default function DrawerClient() {
   const [text, setText] = useState("");
@@ -35,10 +36,9 @@ export default function DrawerClient() {
     startTransition(async () => {
       const result = await paste(text);
 
-      if (result?.error) {
-        console.error(`Error: ${result.error}`);
-      } else {
-        console.log(result.success);
+      if (result?.error) toast.error(result.error.message);
+      else {
+        toast.success(result.data.successMessage);
         setText("");
       }
     });

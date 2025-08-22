@@ -2,13 +2,13 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-import { Edit, Trash } from "lucide-react";
+import { Edit, Loader2, Trash } from "lucide-react";
 
 import type { Paste } from "@prisma/client";
 
 import { useTransition } from "react";
 import { deletePaste } from "@/app/pasteActions";
+import { toast } from "sonner";
 
 export default function TextCard({ paste }: { paste: Paste }) {
   const [isPending, startTransition] = useTransition();
@@ -17,8 +17,8 @@ export default function TextCard({ paste }: { paste: Paste }) {
     startTransition(async () => {
       const result = await deletePaste(paste.id, paste.userId);
 
-      if (result?.error) console.error(`Error: ${result.error}: ${result.err}`);
-      else console.log(`Success: ${result.success}`);
+      if (result.error) toast.error(result.error.message);
+      else toast.success(result.data.successMessage);
     });
   };
 
@@ -32,7 +32,11 @@ export default function TextCard({ paste }: { paste: Paste }) {
           <Edit />
         </Button>
         <Button onClick={deleteHandler} variant="outline" size="icon">
-          <Trash />
+          {isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Trash className="h-4 w-4" />
+          )}
         </Button>
       </div>
     </li>
