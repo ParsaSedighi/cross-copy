@@ -33,6 +33,7 @@ export function SignupForm({ className }: { className?: string }) {
 
   const form = useForm<SignupZFormState>({
     resolver: zodResolver(signupSchema),
+    mode: "onBlur",
     defaultValues: {
       name: "",
       email: "",
