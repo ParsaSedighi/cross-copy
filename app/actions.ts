@@ -5,27 +5,6 @@ import { auth } from "@/lib/auth/auth";
 import { ActionResponse } from "@/lib/types";
 import { tryCatch } from "@/lib/tryCatch";
 
-
-export type SignupFormState = {
-    message: string;
-    errors?: {
-        name?: string[];
-        email?: string[];
-        password?: string[];
-        confirmPassword?: string[];
-    };
-    success: boolean;
-};
-
-export type SigninFormState = {
-    message: string;
-    errors?: {
-        email?: string[];
-        password?: string[];
-    };
-    success: boolean;
-};
-
 export async function signup(
     data: SignupZFormState
 ): ActionResponse<{ message: string }> {
