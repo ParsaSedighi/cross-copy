@@ -2,31 +2,34 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFormStatus } from "react-dom";
-import { useEffect, useActionState } from "react";
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { signinSchema, type SigninZFormState } from "@/lib/schemas";
-import { signin, type SigninFormState } from "@/app/actions";
-
-import { useRouter } from "next/navigation";
+import { signin } from "@/app/actions";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-function SubmitButton({ className }: { className: string }) {
-  const { pending } = useFormStatus();
+function SubmitButton({
+  isPending,
+  className,
+}: {
+  isPending: boolean;
+  className?: string;
+}) {
   return (
-    <Button className={className} type="submit" disabled={pending}>
-      {pending ? "Signing In..." : "Sign In"}
+    <Button className={className} type="submit" disabled={isPending}>
+      {isPending ? "Signing In..." : "Sign In"}
     </Button>
   );
 }
 
 export function SigninForm({ className }: { className?: string }) {
-  const initialState: SigninFormState = { message: "", success: false };
-  const [state, formAction] = useActionState(signin, initialState);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<SigninZFormState>({
     resolver: zodResolver(signinSchema),
@@ -36,22 +39,22 @@ export function SigninForm({ className }: { className?: string }) {
     },
   });
 
-  const router = useRouter();
+  const onSubmit = (data: SigninZFormState) => {
+    startTransition(async () => {
+      const result = await signin(data);
 
-  useEffect(() => {
-    if (state.message) {
-      if (!state.success) {
-        toast.error("Error", { description: state.message });
+      if (result.error) {
+        toast.error("Error", { description: result.error.message });
       } else {
-        toast.success("Success!", { description: state.message });
+        toast.success("Success!", { description: result.data.message });
         router.push("/");
       }
-    }
-  }, [state, form, router]);
+    });
+  };
 
   return (
     <form
-      action={formAction}
+      onSubmit={form.handleSubmit(onSubmit)}
       className={cn(className, "w-full md:w-96 space-y-4")}>
       <div>
         <Input
@@ -61,7 +64,7 @@ export function SigninForm({ className }: { className?: string }) {
           {...form.register("email")}
         />
         <p className="text-sm text-red-500 mt-1">
-          {form.formState.errors.email?.message || state.errors?.email?.[0]}
+          {form.formState.errors.email?.message}
         </p>
       </div>
       <div>
@@ -73,11 +76,10 @@ export function SigninForm({ className }: { className?: string }) {
           {...form.register("password")}
         />
         <p className="text-sm text-red-500 mt-1">
-          {form.formState.errors.password?.message ||
-            state.errors?.password?.[0]}
+          {form.formState.errors.password?.message}
         </p>
       </div>
-      <SubmitButton className="w-full h-11" />
+      <SubmitButton isPending={isPending} className="w-full h-11" />
     </form>
   );
 }

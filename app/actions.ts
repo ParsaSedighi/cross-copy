@@ -1,7 +1,9 @@
 "use server";
 
-import { signupSchema, signinSchema } from "@/lib/schemas";
+import { SignupZFormState, SigninZFormState } from "@/lib/schemas";
 import { auth } from "@/lib/auth/auth";
+import { ActionResponse } from "@/lib/types";
+import { tryCatch } from "@/lib/tryCatch";
 
 
 export type SignupFormState = {
@@ -25,75 +27,43 @@ export type SigninFormState = {
 };
 
 export async function signup(
-    prevState: SignupFormState,
-    formData: FormData
-): Promise<SignupFormState> {
-    const rawData = {
-        name: formData.get("name"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-        confirmPassword: formData.get("confirmPassword"),
+    data: SignupZFormState
+): ActionResponse<{ message: string }> {
+
+    const result = await tryCatch(
+        auth.api.signUpEmail({ body: data })
+    );
+
+    if (result.error) {
+        return {
+            data: null,
+            error: { message: "Signup failed. An unexpected error occurred." },
+        };
+    }
+
+    return {
+        data: { message: `Thank you for signing up, ${data.name}!` },
+        error: null,
     };
-
-    const validatedFields = signupSchema.safeParse(rawData);
-
-    if (!validatedFields.success) {
-        return {
-            message: "Form submission failed. Please check the errors below fields.",
-            errors: validatedFields.error.flatten().fieldErrors,
-            success: false,
-        };
-    }
-
-    try {
-        await auth.api.signUpEmail({
-            body: validatedFields.data,
-        });
-
-        return {
-            message: `Thank you for signing up, ${validatedFields.data.name}!`,
-            success: true,
-        };
-    } catch (e) {
-        return {
-            message: "An unexpected error occurred. Please try again.",
-            success: false,
-        };
-    }
 }
 
 export async function signin(
-    prevState: SigninFormState,
-    formData: FormData
-): Promise<SigninFormState> {
-    const rawData = {
-        email: formData.get("email"),
-        password: formData.get("password"),
-    }
+    data: SigninZFormState
+): ActionResponse<{ message: string }> {
 
-    const validatedFields = signinSchema.safeParse(rawData);
+    const result = await tryCatch(
+        auth.api.signInEmail({ body: data })
+    );
 
-    if (!validatedFields.success) {
+    if (result.error) {
         return {
-            message: "Form submission failed. Please check the errors below.",
-            errors: validatedFields.error.flatten().fieldErrors,
-            success: false,
+            data: null,
+            error: { message: "Sign in failed. Please check your email and password." },
         };
     }
 
-    try {
-        await auth.api.signInEmail({
-            body: validatedFields.data,
-        });
-
-        return {
-            message: `Welcome back!`,
-            success: true,
-        };
-    } catch (e) {
-        return {
-            message: "An unexpected error occurred. Please try again.",
-            success: false,
-        };
-    }
+    return {
+        data: { message: "Welcome back!" },
+        error: null,
+    };
 }
