@@ -5,6 +5,8 @@ import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
 
+import { revalidatePath } from "next/cache";
+
 export type SignupFormState = {
     message: string;
     errors?: {
@@ -113,6 +115,7 @@ export async function paste(text: string) {
                 userId: session.user.id,
             }
         })
+        revalidatePath(`/u/${session.user.id}`)
         return { success: "Text saved successfully!" };
     } catch (err) {
         return { error: "Unexpected error occurred", err }
@@ -132,9 +135,9 @@ export async function deletePaste(textId: string, userId: string) {
                 id: textId
             }
         })
+        revalidatePath(`/u/${session.user.id}`)
         return { success: "Delete successfull" }
     } catch (err) {
         return { error: "Unexpected error occurred", err }
     }
-
 }
