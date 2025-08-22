@@ -5,9 +5,9 @@ import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { auth } from '@/lib/auth/auth'
 import { tryCatch } from '@/lib/tryCatch'
-import { type PasteActionResponse } from '@/lib/types';
+import { type ActionResponse } from '@/lib/types';
 
-export async function paste(text: string): PasteActionResponse<{ successMessage: string }> {
+export async function paste(text: string): ActionResponse<{ successMessage: string }> {
   if (!text || typeof text !== 'string' || text.trim() === '') {
     return { data: null, error: { message: 'Invalid text provided. Cannot save empty content.' } };
   }
@@ -39,7 +39,7 @@ export async function paste(text: string): PasteActionResponse<{ successMessage:
 }
 
 
-export async function deletePaste(textId: string, userId: string): PasteActionResponse<{ successMessage: string }> {
+export async function deletePaste(textId: string, userId: string): ActionResponse<{ successMessage: string }> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) {
     return { data: null, error: { message: 'Authentication required. Please sign in.' } };
