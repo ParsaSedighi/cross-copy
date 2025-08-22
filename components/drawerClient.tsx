@@ -1,6 +1,6 @@
 "use client";
 
-import { paste } from "@/app/actions";
+import { paste } from "@/app/pasteActions";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,

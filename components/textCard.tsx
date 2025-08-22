@@ -8,7 +8,7 @@ import { Edit, Trash } from "lucide-react";
 import type { Paste } from "@prisma/client";
 
 import { useTransition } from "react";
-import { deletePaste } from "@/app/actions";
+import { deletePaste } from "@/app/pasteActions";
 
 export default function TextCard({ paste }: { paste: Paste }) {
   const [isPending, startTransition] = useTransition();
