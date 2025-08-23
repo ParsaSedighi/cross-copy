@@ -40,7 +40,6 @@ export const paste = async (
       };
     }
 
-    // Success is also an explicit return of a Result object
     return { data: { successMessage: "Pasted successfully!" }, error: null };
   });
 
