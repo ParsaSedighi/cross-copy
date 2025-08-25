@@ -14,8 +14,16 @@ import type { Paste } from "@prisma/client";
 import { useTransition } from "react";
 import { deletePaste } from "@/app/(actions)/pasteActions";
 import { toast } from "sonner";
+import EditDrawer from "@/components/editDrawer";
+import { User } from "better-auth";
 
-export default function PasteCard({ paste }: { paste: Paste }) {
+export default function PasteCard({
+  paste,
+  userId,
+}: {
+  paste: Paste;
+  userId: string;
+}) {
   const [isPending, startTransition] = useTransition();
 
   const copyHandler = async () => {
@@ -53,9 +61,11 @@ export default function PasteCard({ paste }: { paste: Paste }) {
           </Tooltip>
           <Tooltip delayDuration={100} disableHoverableContent>
             <TooltipTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Edit />
-              </Button>
+              <EditDrawer userId={userId} prevtext={paste}>
+                <Button variant="outline" size="icon">
+                  <Edit />
+                </Button>
+              </EditDrawer>
             </TooltipTrigger>
             <TooltipContent>Edit</TooltipContent>
           </Tooltip>

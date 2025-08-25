@@ -43,6 +43,47 @@ export const paste = async (
     return { data: { successMessage: "Pasted successfully!" }, error: null };
   });
 
+
+export const editPaste = async (
+  userId: string,
+  textId: string,
+  newText: string
+): ActionResponse<{ successMessage: string }> =>
+  createAuthenticatedAction(async (user) => {
+    if (user.id !== userId) {
+      return {
+        data: null,
+        error: {
+          message: "Permission denied. You can only edit your own pastes.",
+        },
+      }
+    }
+
+    const result = await tryCatch(
+      (async () => {
+        await db.paste.update({
+          where: {
+            id: textId
+          },
+          data: {
+            text: newText
+          }
+        })
+        revalidatePath(`/u/${user.id}`);
+      })()
+    )
+    if (result.error) {
+      console.error("Failed to edit paste:", result.error);
+      return {
+        data: null,
+        error: {
+          message: "A database error occurred. Could not update the paste.",
+        },
+      };
+    }
+    return { data: { successMessage: "Paste edited successfully." }, error: null };
+  })
+
 export const deletePaste = async (
   textId: string,
   userId: string
