@@ -10,13 +10,13 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus } from "lucide-react";
+import { CopyPlus } from "lucide-react";
 import { Clipboard } from "lucide-react";
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-export default function DrawerClient() {
+export default function PasteDrawer() {
   const [text, setText] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -25,7 +25,7 @@ export default function DrawerClient() {
       if (!navigator.clipboard) {
         return;
       }
-      const clipboardText = await navigator.clipboard.read();
+      const clipboardText = await navigator.clipboard.readText();
       if (typeof clipboardText === "string") setText(clipboardText);
     } catch (err) {
       console.error("Failed to read clipboard: ", err);
@@ -52,8 +52,8 @@ export default function DrawerClient() {
             variant="outline"
             size="icon"
             onClick={handlePaste}
-            className="rounded-full w-16 h-16">
-            <Plus className="text-secondary-foreground" size={32} />
+            className="rounded-full w-16 h-16 [&_svg]:size-5">
+            <CopyPlus className="text-secondary-foreground" />
           </Button>
         </DrawerTrigger>
       </div>

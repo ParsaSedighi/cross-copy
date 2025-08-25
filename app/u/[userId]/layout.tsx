@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -24,7 +25,7 @@ export default async function DashboardLayout({
   return (
     <div className="h-screen flex flex-col">
       <Navbar username={session.user.name} />
-      {children}
+      <TooltipProvider>{children}</TooltipProvider>
     </div>
   );
 }

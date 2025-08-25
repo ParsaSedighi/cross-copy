@@ -1,8 +1,8 @@
-import DrawerClient from "@/components/drawerClient";
+import PasteDrawer from "@/components/pasteDrawer";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
-import TextCard from "@/components/textCard";
+import PasteCard from "@/components/pasteCard";
 
 export default async function Dashboard() {
   const session = await auth.api.getSession({
@@ -20,11 +20,11 @@ export default async function Dashboard() {
       <div className="flex-grow mt-4">
         <ul className="space-y-8">
           {data.map((data) => {
-            return <TextCard key={data.id} paste={data} />;
+            return <PasteCard key={data.id} paste={data} />;
           })}
         </ul>
       </div>
-      <DrawerClient />
+      <PasteDrawer />
     </main>
   );
 }
