@@ -1,14 +1,27 @@
 "use client";
 
-import { User } from "lucide-react";
+import { LogOut, Menu, User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { TypewriterTwoText } from "./typewriterTwoText";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ToggleThemeText } from "@/components/toggleTheme";
 
 const MotionButton = motion.create(Button);
+const dropdownVariants = {
+  open: {
+    opacity: 1,
+    height: "auto",
+    transition: { duration: 0.2, ease: "easeOut" },
+  },
+  closed: {
+    opacity: 0,
+    height: 0,
+    transition: { duration: 0.2, ease: "easeIn" },
+  },
+} as const;
 
 export default function Navbar({
   className,
@@ -18,6 +31,7 @@ export default function Navbar({
   username?: string;
 }) {
   const [playAnimation, setPlayAnimation] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     // This code only runs in the browser, after the component has mounted.
@@ -50,11 +64,34 @@ export default function Navbar({
           </Link>
         </div>
         <div className="flex space-x-4">
-          <Button variant="outline" size="icon">
-            <User size={16} />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}>
+            <Menu size={16} />
           </Button>
         </div>
       </div>
+      <motion.div
+        className="mt-4"
+        style={{ transformOrigin: "top" }}
+        initial="closed"
+        animate={isOpen ? "open" : "closed"}
+        variants={dropdownVariants}>
+        <div className="flex border rounded-lg w-full h-full">
+          <Button className="flex-grow" variant="ghost">
+            <User2 />
+            Change Username
+          </Button>
+          <ToggleThemeText />
+          <Button variant="ghost">
+            <LogOut />
+            Logout
+          </Button>
+        </div>
+      </motion.div>
     </nav>
   );
 }
