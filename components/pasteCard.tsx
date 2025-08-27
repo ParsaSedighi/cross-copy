@@ -15,7 +15,6 @@ import { useTransition } from "react";
 import { deletePaste } from "@/app/(actions)/pasteActions";
 import { toast } from "sonner";
 import EditDrawer from "@/components/editDrawer";
-import { User } from "better-auth";
 
 export default function PasteCard({
   paste,
@@ -60,13 +59,13 @@ export default function PasteCard({
             <TooltipContent>Copy</TooltipContent>
           </Tooltip>
           <Tooltip delayDuration={100} disableHoverableContent>
-            <TooltipTrigger asChild>
-              <EditDrawer userId={userId} prevtext={paste}>
+            <EditDrawer userId={userId} prevtext={paste}>
+              <TooltipTrigger asChild>
                 <Button variant="outline" size="icon">
                   <Edit />
                 </Button>
-              </EditDrawer>
-            </TooltipTrigger>
+              </TooltipTrigger>
+            </EditDrawer>
             <TooltipContent>Edit</TooltipContent>
           </Tooltip>
         </div>
