@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { TypewriterTwoText } from "./typewriterTwoText";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const MotionButton = motion.create(Button);
 
@@ -35,16 +36,18 @@ export default function Navbar({
     <nav className={cn(className, "mx-4 mt-4")}>
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center space-x-2">
-          <MotionButton className="min-w-36" variant="secondary" layout>
-            {playAnimation ? (
-              <TypewriterTwoText
-                text1={`Welcome ${username}!`}
-                text2="CrossCopy"
-              />
-            ) : (
-              "CrossCopy"
-            )}
-          </MotionButton>
+          <Link href="/">
+            <MotionButton className="min-w-36" variant="secondary" layout>
+              {playAnimation ? (
+                <TypewriterTwoText
+                  text1={`Welcome ${username}!`}
+                  text2="CrossCopy"
+                />
+              ) : (
+                "CrossCopy"
+              )}
+            </MotionButton>
+          </Link>
         </div>
         <div className="flex space-x-4">
           <Button variant="outline" size="icon">
