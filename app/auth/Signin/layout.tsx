@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import ModeToggle from "@/components/modeToggle";
+import ToggleThemeIcon from "@/components/toggleTheme";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -11,7 +11,7 @@ export default function SignupPageLayout({
       <Card className="h-full w-full rounded-none lg:rounded-r-2xl flex flex-col">
         <CardHeader>
           <div className="flex justify-between items-center text-secondary-foreground">
-            <ModeToggle />
+            <ToggleThemeIcon />
             <div className="flex items-center space-x-1 lg:space-x-4">
               <p className="text-[10px] lg:text-sm">Create an account?</p>
               <Link href="/auth/Signup">
