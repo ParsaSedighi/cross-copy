@@ -89,3 +89,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+body.modal-open {
+  overflow: hidden;
+}

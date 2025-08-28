@@ -21,14 +21,15 @@ export default async function Dashboard() {
   });
 
   return (
-    <main className="h-full flex flex-col mx-4 mb-4 mt-2">
-      <div className="flex-grow mt-4 mb-6">
-        <ul className="space-y-8">
+    <main className="h-full flex flex-col mx-4 mb-4">
+      <div className="flex-grow mb-6">
+        <ul className="">
           {data.map((data) => {
             return (
               <PasteCard key={data.id} paste={data} userId={session?.user.id} />
             );
           })}
+          <div className="h-8"></div>
         </ul>
       </div>
       <PasteDrawer />
