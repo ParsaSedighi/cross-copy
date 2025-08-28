@@ -104,11 +104,11 @@ export function ToggleThemeText({ className }: { className?: string }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className="relative" variant="ghost">
-          <AnimatePresence initial={false} mode="sync">
+          <AnimatePresence initial={false} mode="wait">
             {theme === "dark" ? (
               <MotionMoon
                 key="moon"
-                className="absolute mx-3 left-0 h-[1.2rem] w-[1.2rem]"
+                className=""
                 initial={{ y: 0, opacity: 0, rotate: -90 }}
                 animate={{ y: 0, opacity: 1, rotate: 0 }}
                 exit={{ y: 0, opacity: 0, rotate: 90 }}
@@ -117,7 +117,7 @@ export function ToggleThemeText({ className }: { className?: string }) {
             ) : (
               <MotionSun
                 key="sun"
-                className="absolute mx-3 left-0 h-[1.2rem] w-[1.2rem]"
+                className=""
                 initial={{ y: 0, opacity: 0, rotate: -90 }}
                 animate={{ y: 0, opacity: 1, rotate: 0 }}
                 exit={{ y: 0, opacity: 0, rotate: 90 }}
@@ -125,7 +125,7 @@ export function ToggleThemeText({ className }: { className?: string }) {
               />
             )}
           </AnimatePresence>
-          <span className="pl-6">Theme</span>
+          <div>Theme</div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

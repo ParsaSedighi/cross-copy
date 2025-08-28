@@ -80,8 +80,8 @@ export default function Navbar({
         initial="closed"
         animate={isOpen ? "open" : "closed"}
         variants={dropdownVariants}>
-        <div className="flex border rounded-lg w-full h-full">
-          <Button className="flex-grow" variant="ghost">
+        <div className="flex flex-col border rounded-lg w-full h-full">
+          <Button variant="ghost">
             <User2 />
             Change Username
           </Button>
