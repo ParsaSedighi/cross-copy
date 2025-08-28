@@ -32,8 +32,12 @@ export default function PasteCard({
 
   const copyHandler = async () => {
     try {
-      toast.success("Copied!");
-      await navigator.clipboard.writeText(paste.text);
+      if (!window.isSecureContext) {
+        toast.error("Cannot copy!");
+      } else {
+        toast.success("Copied!");
+        await navigator.clipboard.writeText(paste.text);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -130,11 +134,17 @@ export default function PasteCard({
                   onClick={() => setIsOpen(false)}>
                   <ChevronLeft className="h-5 w-5" />
                 </Button>
+                <div className="flex flex-grow justify-end">
+                  <Button variant="outline">
+                    <Copy />
+                    Copy
+                  </Button>
+                </div>
               </div>
 
               {/* --- MODAL CONTENT --- */}
               <div className="flex-1 w-full overflow-y-auto pr-2">
-                <p className="whitespace-pre-wrap">{paste.text}</p>
+                <p className="whitespace-pre-wrap break-words">{paste.text}</p>
               </div>
             </motion.div>
           </motion.div>
