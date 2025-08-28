@@ -22,7 +22,7 @@ export default async function Dashboard() {
 
   return (
     <main className="h-full flex flex-col mx-4 mb-4 mt-2">
-      <div className="flex-grow mt-4">
+      <div className="flex-grow mt-4 mb-6">
         <ul className="space-y-8">
           {data.map((data) => {
             return (
