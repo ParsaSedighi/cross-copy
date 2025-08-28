@@ -96,12 +96,12 @@ export default function Navbar({
         animate={isOpen ? "open" : "closed"}
         variants={dropdownVariants}>
         <div className="flex flex-col border rounded-lg w-full h-full">
-          <Button variant="ghost">
+          <Button variant="ghost" disabled={!isOpen}>
             <User2 />
             Change Username
           </Button>
-          <ToggleThemeText />
-          <Button onClick={logoutHandler} variant="ghost">
+          <ToggleThemeText disabled={!isOpen} />
+          <Button onClick={logoutHandler} variant="ghost" disabled={!isOpen}>
             <LogOut />
             Logout
           </Button>

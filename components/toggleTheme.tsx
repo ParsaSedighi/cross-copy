@@ -86,7 +86,13 @@ export default function ToggleThemeIcon({
   );
 }
 
-export function ToggleThemeText({ className }: { className?: string }) {
+export function ToggleThemeText({
+  className,
+  disabled,
+}: {
+  className?: string;
+  disabled?: boolean;
+}) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -107,7 +113,7 @@ export function ToggleThemeText({ className }: { className?: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="relative" variant="ghost">
+        <Button className="relative" variant="ghost" disabled={disabled}>
           <AnimatePresence initial={false} mode="wait">
             {theme === "dark" ? (
               <MotionMoon
