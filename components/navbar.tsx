@@ -9,6 +9,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ToggleThemeText } from "@/components/toggleTheme";
 
+import { authClient } from "@/lib/auth/authClient";
+import { useRouter } from "next/navigation";
+
 const MotionButton = motion.create(Button);
 const dropdownVariants = {
   open: {
@@ -33,6 +36,8 @@ export default function Navbar({
   const [playAnimation, setPlayAnimation] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  const router = useRouter();
+
   useEffect(() => {
     // This code only runs in the browser, after the component has mounted.
     const hasSeenAnimation = sessionStorage.getItem("hasSeenWelcomeAnimation");
@@ -45,6 +50,16 @@ export default function Navbar({
       sessionStorage.setItem("hasSeenWelcomeAnimation", "true");
     }
   }, []); // The empty array [] ensures this effect runs only once.
+
+  const logoutHandler = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/");
+        },
+      },
+    });
+  };
 
   return (
     <nav className={cn(className, "mx-4 mt-4")}>
@@ -86,7 +101,7 @@ export default function Navbar({
             Change Username
           </Button>
           <ToggleThemeText />
-          <Button variant="ghost">
+          <Button onClick={logoutHandler} variant="ghost">
             <LogOut />
             Logout
           </Button>
