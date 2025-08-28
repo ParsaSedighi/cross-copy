@@ -17,16 +17,6 @@ import { AnimatePresence, motion } from "motion/react";
 const MotionSun = motion(Sun);
 const MotionMoon = motion(Moon);
 
-const sunVariants = {
-  light: { scale: 1, rotate: 0 },
-  dark: { scale: 0, rotate: -90 },
-};
-
-const moonVariants = {
-  light: { scale: 0, rotate: 90 },
-  dark: { scale: 1, rotate: 0 },
-};
-
 const transition = {
   type: "spring",
   stiffness: 200,
@@ -72,10 +62,24 @@ export default function ToggleThemeIcon({
       variant="outline"
       size="icon"
       onClick={toggleHandler}>
-      {theme === "light" ? (
-        <Moon size={iconSize} className="transition-all" />
+      {theme === "dark" ? (
+        <MotionMoon
+          key="moon"
+          className=""
+          initial={{ y: 0, opacity: 0, rotate: -90 }}
+          animate={{ y: 0, opacity: 1, rotate: 0 }}
+          exit={{ y: 0, opacity: 0, rotate: 90 }}
+          transition={transition}
+        />
       ) : (
-        <Sun size={iconSize} className="transition-all" />
+        <MotionSun
+          key="sun"
+          className=""
+          initial={{ y: 0, opacity: 0, rotate: -90 }}
+          animate={{ y: 0, opacity: 1, rotate: 0 }}
+          exit={{ y: 0, opacity: 0, rotate: 90 }}
+          transition={transition}
+        />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>
