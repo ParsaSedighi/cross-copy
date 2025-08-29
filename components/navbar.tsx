@@ -1,28 +1,112 @@
-import ModeToggle from '@/components/modeToggle';
+"use client";
 
-import { Github } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { LogOut, Menu, User2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { motion } from "motion/react";
+import { TypewriterTwoText } from "./typewriterTwoText";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ToggleThemeText } from "@/components/toggleTheme";
 
-export default function Navbar({className}: any) {
+import { authClient } from "@/lib/auth/authClient";
+import { useRouter } from "next/navigation";
+
+const MotionButton = motion.create(Button);
+const dropdownVariants = {
+  open: {
+    opacity: 1,
+    height: "auto",
+    transition: { duration: 0.2, ease: "easeOut" },
+  },
+  closed: {
+    opacity: 0,
+    height: 0,
+    transition: { duration: 0.2, ease: "easeIn" },
+  },
+} as const;
+
+export default function Navbar({
+  className,
+  username,
+}: {
+  className?: string;
+  username?: string;
+}) {
+  const [playAnimation, setPlayAnimation] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    // This code only runs in the browser, after the component has mounted.
+    const hasSeenAnimation = sessionStorage.getItem("hasSeenWelcomeAnimation");
+
+    // If the user hasn't seen the animation yet in this session...
+    if (!hasSeenAnimation) {
+      // ...update the state to trigger the animation.
+      setPlayAnimation(true);
+      // And save to sessionStorage so it doesn't play again.
+      sessionStorage.setItem("hasSeenWelcomeAnimation", "true");
+    }
+  }, []); // The empty array [] ensures this effect runs only once.
+
+  const logoutHandler = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/");
+        },
+      },
+    });
+  };
+
   return (
-    <nav className={cn(className)}>
-      <div className="flex items-center justify-between">
-        <a target='_blank' href='https://github.com/ParsaSedighi/cross-copy' className='md:hidden'>
-          <Button variant="outline" size="icon">
-            <Github />
+    <nav className={cn(className, "mx-4 mt-4")}>
+      <div className="flex justify-between items-center w-full">
+        <div className="flex items-center space-x-2">
+          <Link href="/">
+            <MotionButton className="min-w-36" variant="secondary" layout>
+              {playAnimation ? (
+                <TypewriterTwoText
+                  text1={`Welcome ${username}!`}
+                  text2="CrossCopy"
+                />
+              ) : (
+                "CrossCopy"
+              )}
+            </MotionButton>
+          </Link>
+        </div>
+        <div className="flex space-x-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}>
+            <Menu size={16} />
           </Button>
-        </a>
-        <h1 className="text-3xl font-bold">CrossCopy</h1>
-        <div className='flex space-x-4'>
-        <ModeToggle />
-        <a target='_blank' href='https://github.com/ParsaSedighi/cross-copy' className='hidden md:block'>
-          <Button variant="outline" size="icon">
-            <Github />
-          </Button>
-        </a>
         </div>
       </div>
+      <motion.div
+        className="mt-4"
+        style={{ transformOrigin: "top" }}
+        initial="closed"
+        animate={isOpen ? "open" : "closed"}
+        variants={dropdownVariants}>
+        <div className="flex flex-col border rounded-lg w-full h-full">
+          <Button variant="ghost" disabled={!isOpen}>
+            <User2 />
+            Change Username
+          </Button>
+          <ToggleThemeText disabled={!isOpen} />
+          <Button onClick={logoutHandler} variant="ghost" disabled={!isOpen}>
+            <LogOut />
+            Logout
+          </Button>
+        </div>
+      </motion.div>
     </nav>
   );
 }
