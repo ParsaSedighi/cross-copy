@@ -135,7 +135,7 @@ export default function PasteCard({
                   <ChevronLeft className="h-5 w-5" />
                 </Button>
                 <div className="flex flex-grow justify-end">
-                  <Button variant="outline">
+                  <Button variant="outline" onClick={copyHandler}>
                     <Copy />
                     Copy
                   </Button>
