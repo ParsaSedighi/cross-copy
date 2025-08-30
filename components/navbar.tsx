@@ -65,18 +65,16 @@ export default function Navbar({
     <nav className={cn(className, "mx-4 mt-4")}>
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center space-x-2">
-          <Link href="/">
-            <MotionButton className="min-w-36" variant="secondary" layout>
-              {playAnimation ? (
-                <TypewriterTwoText
-                  text1={`Welcome ${username}!`}
-                  text2="CrossCopy"
-                />
-              ) : (
-                "CrossCopy"
-              )}
-            </MotionButton>
-          </Link>
+          <MotionButton className="min-w-36" variant="secondary" layout>
+            {playAnimation ? (
+              <TypewriterTwoText
+                text1={`Welcome ${username}!`}
+                text2="CrossCopy"
+              />
+            ) : (
+              "CrossCopy"
+            )}
+          </MotionButton>
         </div>
         <div className="flex space-x-4">
           <Button
