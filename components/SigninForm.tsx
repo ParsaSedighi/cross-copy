@@ -37,6 +37,7 @@ export function SigninForm({ className }: { className?: string }) {
       email: "",
       password: "",
     },
+    mode: "onBlur",
   });
 
   const onSubmit = (data: SigninZFormState) => {
