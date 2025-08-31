@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { TypewriterTwoText } from "./typewriterTwoText";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { ToggleThemeText } from "@/components/toggleTheme";
 
 import { authClient } from "@/lib/auth/authClient";
@@ -39,17 +38,13 @@ export default function Navbar({
   const router = useRouter();
 
   useEffect(() => {
-    // This code only runs in the browser, after the component has mounted.
     const hasSeenAnimation = sessionStorage.getItem("hasSeenWelcomeAnimation");
 
-    // If the user hasn't seen the animation yet in this session...
     if (!hasSeenAnimation) {
-      // ...update the state to trigger the animation.
       setPlayAnimation(true);
-      // And save to sessionStorage so it doesn't play again.
       sessionStorage.setItem("hasSeenWelcomeAnimation", "true");
     }
-  }, []); // The empty array [] ensures this effect runs only once.
+  }, []);
 
   const logoutHandler = async () => {
     await authClient.signOut({
