@@ -17,19 +17,6 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
-  cors: {
-    origin: [
-      "http://localhost:3000",
-      "https://crosscopy.ir",
-      "https://www.crosscopy.ir",
-    ],
-    credentials: true,
-  },
-  cookies: {
-    domain: ".crosscopy.ir",
-    secure: true,
-    sameSite: "lax",
-  },
   trustedOrigins: [
     "http://localhost:3000",
     process.env.NEXT_PUBLIC_BASE_URL!,
