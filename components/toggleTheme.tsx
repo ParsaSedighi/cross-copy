@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AnimatePresence, motion } from "motion/react";
 
-const MotionSun = motion(Sun);
-const MotionMoon = motion(Moon);
+const MotionSun = motion.create(Sun);
+const MotionMoon = motion.create(Moon);
 
 const transition = {
   type: "spring",
