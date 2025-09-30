@@ -16,7 +16,7 @@ import { useTransition, useState } from "react";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -88,12 +88,15 @@ export default function PasteDrawer() {
         const random = generateRandomRoute();
         setRoutePlaceholder(random);
         form.reset({ paste: "", isPublic: false, route: "" });
+
+        setIsOpen(false);
       }
     });
   };
 
   return (
     <Drawer
+      open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
         if (open) {
@@ -145,7 +148,7 @@ export default function PasteDrawer() {
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
-                      <Label htmlFor="public-switch">make it public</Label>
+                      <Label htmlFor="public-switch">Make it public</Label>
                     </div>
                   </FormControl>
                 </FormItem>
@@ -157,30 +160,57 @@ export default function PasteDrawer() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="flex items-center mt-4 space-x-3">
-                      <MotionLabel
-                        htmlFor="public-input"
-                        style={{ transformOrigin: "top" }}
-                        initial="closed"
-                        animate={form.getValues("isPublic") ? "open" : "closed"}
-                        variants={inputRouteVariants}>
-                        Route:{" "}
-                      </MotionLabel>
-                      <MotionInput
-                        id="public-input"
-                        style={{ transformOrigin: "top" }}
-                        initial="closed"
-                        animate={form.getValues("isPublic") ? "open" : "closed"}
-                        variants={inputRouteVariants}
-                        placeholder={routePlaceholder}
-                        value={field.value}
-                        onChange={field.onChange}
-                        className={
-                          !form.getValues("isPublic")
-                            ? "opacity-50 pointer-events-auto"
-                            : ""
-                        }
-                      />
+                    <div className="flex items-start mt-4 flex-col">
+                      <div className="flex items-center space-x-3">
+                        <MotionLabel
+                          htmlFor="public-input"
+                          style={{ transformOrigin: "top" }}
+                          initial="closed"
+                          animate={
+                            form.getValues("isPublic") ? "open" : "closed"
+                          }
+                          variants={inputRouteVariants}>
+                          Route:{" "}
+                        </MotionLabel>
+                        <MotionInput
+                          id="public-input"
+                          style={{ transformOrigin: "top" }}
+                          initial="closed"
+                          animate={
+                            form.getValues("isPublic") ? "open" : "closed"
+                          }
+                          variants={inputRouteVariants}
+                          placeholder={routePlaceholder}
+                          value={field.value}
+                          onChange={field.onChange}
+                          className={`${
+                            !form.getValues("isPublic")
+                              ? "opacity-50 pointer-events-none"
+                              : ""
+                          } ${
+                            form.formState.errors.route
+                              ? "border border-red-500"
+                              : ""
+                          }`}
+                        />
+                      </div>
+                      <AnimatePresence mode="wait">
+                        {form.formState.errors.route && (
+                          <motion.p
+                            key={`error-message-${form.formState.errors.route?.message}`}
+                            initial={{ opacity: 0, height: 0, x: 0 }}
+                            animate={{
+                              opacity: 1,
+                              height: "auto",
+                              x: [0, -8, 8, -8, 8, 0],
+                            }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.4 }}
+                            className="text-sm text-red-500 mt-1">
+                            {form.formState.errors.route.message}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </FormControl>
                 </FormItem>
@@ -204,16 +234,14 @@ export default function PasteDrawer() {
                   Cancel
                 </Button>
               </DrawerClose>
-              <DrawerClose asChild>
-                <Button
-                  type="submit"
-                  disabled={!form.watch("paste")}
-                  className="w-28"
-                  size="lg"
-                  variant="default">
-                  Done
-                </Button>
-              </DrawerClose>
+              <Button
+                type="submit"
+                disabled={isPending || !form.watch("paste")}
+                className="w-28"
+                size="lg"
+                variant="default">
+                Done
+              </Button>
             </div>
           </form>
         </Form>
