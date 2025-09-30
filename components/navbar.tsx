@@ -4,12 +4,12 @@ import { LogOut, Menu, User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
-import { TypewriterTwoText } from "./typewriterTwoText";
 import { useEffect, useState } from "react";
 import { ToggleThemeText } from "@/components/toggleTheme";
 
 import { authClient } from "@/lib/auth/authClient";
 import { useRouter } from "next/navigation";
+import { Typewriter } from "./typewriter";
 
 const MotionButton = motion.create(Button);
 const dropdownVariants = {
@@ -39,6 +39,7 @@ export default function Navbar({
 
   useEffect(() => {
     const hasSeenAnimation = sessionStorage.getItem("hasSeenWelcomeAnimation");
+    // const hasSeenAnimation = false; // TEST
 
     if (!hasSeenAnimation) {
       setPlayAnimation(true);
@@ -62,9 +63,12 @@ export default function Navbar({
         <div className="flex items-center space-x-2">
           <MotionButton className="min-w-36" variant="secondary" layout>
             {playAnimation ? (
-              <TypewriterTwoText
-                text1={`Welcome ${username}!`}
-                text2="CrossCopy"
+              <Typewriter
+                texts={[`Welcome ${username}`, "CrossCopy"]}
+                cursor={false}
+                delayBetween={3000}
+                typingSpeed={200}
+                deletingSpeed={100}
               />
             ) : (
               "CrossCopy"
