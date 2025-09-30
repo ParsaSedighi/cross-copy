@@ -92,6 +92,20 @@ export default function PasteCard({
               <TooltipContent>Edit</TooltipContent>
             </Tooltip>
           </div>
+          {/* TEST ISPUBLIC */}
+          <Tooltip delayDuration={100} disableHoverableContent>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="icon">
+                {paste.isPublic ? (
+                  <p className="font-bold">P</p>
+                ) : (
+                  <p className="line-through text-muted-foreground">P</p>
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{paste.route}</TooltipContent>
+          </Tooltip>
+          {/* END TEST ISPUBLIC */}
           <Tooltip delayDuration={100} disableHoverableContent>
             <TooltipTrigger asChild>
               <Button

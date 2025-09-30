@@ -8,11 +8,12 @@ datasource db {
 }
 
 model Paste {
-  id     String  @id @default(uuid())
-  text   String
-  userId String
-  route  String?
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       String  @id @default(uuid())
+  text     String
+  userId   String
+  route    String?
+  isPublic Boolean @default(false)
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {

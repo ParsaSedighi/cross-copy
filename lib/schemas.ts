@@ -32,8 +32,27 @@ export const signinSchema = z.object({
     .string()
     .trim()
     .pipe(z.email({ error: "Please enter a valid email address." })),
-  password: z.string().min(1, { error: "Password is required." }),
+  password: z.string().nonempty({ error: "Password is required." }),
+});
+
+export const pasteSchema = z.object({
+  paste: z.string().trim().nonempty({ message: "Your text cannot be empty." }),
+  isPublic: z.boolean(),
+  route: z
+    .string()
+    .trim()
+    .optional()
+    .refine(
+      (val) =>
+        !val ||
+        (val.length >= 3 && val.length <= 16 && /^[a-z0-9-]+$/.test(val)),
+      {
+        message:
+          "Route must be 3-16 chars, only lowercase letters, numbers, and hyphens.",
+      }
+    ),
 });
 
 export type SignupZFormState = z.infer<typeof signupSchema>;
 export type SigninZFormState = z.infer<typeof signinSchema>;
+export type pasteZFormState = z.infer<typeof pasteSchema>;

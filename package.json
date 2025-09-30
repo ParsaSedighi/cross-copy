@@ -61,7 +61,8 @@
       "@prisma/client",
       "@prisma/engines",
       "prisma",
-      "sharp"
+      "sharp",
+      "unrs-resolver"
     ]
   }
 }

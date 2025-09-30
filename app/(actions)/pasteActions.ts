@@ -5,12 +5,15 @@ import { db } from "@/lib/db";
 import { tryCatch } from "@/lib/tryCatch";
 import { type ActionResponse } from "@/lib/types";
 import { createAuthenticatedAction } from "@/lib/safeAction";
+import { type pasteZFormState, pasteSchema } from "@/lib/schemas";
 
 export const paste = async (
-  text: string
+  formData: pasteZFormState
 ): ActionResponse<{ successMessage: string }> =>
   createAuthenticatedAction(async (user) => {
-    if (!text || typeof text !== "string" || text.trim() === "") {
+    const { paste, isPublic, route } = formData;
+
+    if (!paste || typeof paste !== "string" || paste.trim() === "") {
       return {
         data: null,
         error: { message: "Invalid text provided. Cannot save empty content." },
@@ -21,8 +24,10 @@ export const paste = async (
       (async () => {
         const newPaste = await db.paste.create({
           data: {
-            text,
+            text: paste,
             userId: user.id,
+            isPublic,
+            route,
           },
         });
         revalidatePath(`/u/${user.id}`);
@@ -39,10 +44,8 @@ export const paste = async (
         },
       };
     }
-
     return { data: { successMessage: "Pasted successfully!" }, error: null };
   });
-
 
 export const editPaste = async (
   userId: string,
@@ -56,22 +59,22 @@ export const editPaste = async (
         error: {
           message: "Permission denied. You can only edit your own pastes.",
         },
-      }
+      };
     }
 
     const result = await tryCatch(
       (async () => {
         await db.paste.update({
           where: {
-            id: textId
+            id: textId,
           },
           data: {
-            text: newText
-          }
-        })
+            text: newText,
+          },
+        });
         revalidatePath(`/u/${user.id}`);
       })()
-    )
+    );
     if (result.error) {
       console.error("Failed to edit paste:", result.error);
       return {
@@ -81,8 +84,11 @@ export const editPaste = async (
         },
       };
     }
-    return { data: { successMessage: "Paste edited successfully." }, error: null };
-  })
+    return {
+      data: { successMessage: "Paste edited successfully." },
+      error: null,
+    };
+  });
 
 export const deletePaste = async (
   textId: string,
@@ -117,5 +123,8 @@ export const deletePaste = async (
       };
     }
 
-    return { data: { successMessage: "Paste deleted successfully." }, error: null };
+    return {
+      data: { successMessage: "Paste deleted successfully." },
+      error: null,
+    };
   });

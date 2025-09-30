@@ -11,14 +11,56 @@ import {
 } from "@/components/ui/drawer";
 import { Textarea } from "@/components/ui/textarea";
 import { CopyPlus } from "lucide-react";
-import { Clipboard } from "lucide-react";
 
-import { useState, useTransition } from "react";
+import { useTransition, useState } from "react";
 import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { motion } from "motion/react";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem } from "./ui/form";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { pasteSchema, pasteZFormState } from "@/lib/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const MotionInput = motion.create(Input);
+const MotionLabel = motion.create(Label);
+const inputRouteVariants = {
+  open: {
+    opacity: 1,
+    height: "auto",
+    transition: { duration: 0.2, ease: "easeOut" },
+  },
+  closed: {
+    opacity: 0,
+    height: 0,
+    transition: { duration: 0.2, ease: "easeIn" },
+  },
+} as const;
+
+function generateRandomRoute() {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < 5; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
 
 export default function PasteDrawer() {
-  const [text, setText] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [isOpen, setIsOpen] = useState(false);
+  const [routePlaceholder, setRoutePlaceholder] = useState("");
+
+  const form = useForm<pasteZFormState>({
+    resolver: zodResolver(pasteSchema),
+    mode: "onBlur",
+    defaultValues: {
+      paste: "",
+      isPublic: false,
+      route: "",
+    },
+  });
 
   const handlePaste = async () => {
     try {
@@ -26,26 +68,40 @@ export default function PasteDrawer() {
         return;
       }
       const clipboardText = await navigator.clipboard.readText();
-      if (typeof clipboardText === "string") setText(clipboardText);
+      if (typeof clipboardText === "string")
+        form.setValue("paste", clipboardText, { shouldDirty: true });
     } catch (err) {
       console.error("Failed to read clipboard: ", err);
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit: SubmitHandler<pasteZFormState> = (formData) => {
     startTransition(async () => {
-      const result = await paste(text);
+      const finalRoute = !formData.isPublic
+        ? routePlaceholder
+        : formData.route || routePlaceholder;
+      const result = await paste({ ...formData, route: finalRoute });
 
       if (result?.error) toast.error(result.error.message);
       else {
         toast.success(result.data.successMessage);
-        setText("");
+        const random = generateRandomRoute();
+        setRoutePlaceholder(random);
+        form.reset({ paste: "", isPublic: false, route: "" });
       }
     });
   };
 
   return (
-    <Drawer>
+    <Drawer
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (open) {
+          const random = generateRandomRoute();
+          setRoutePlaceholder(random);
+          form.reset({ paste: "", isPublic: false, route: "" });
+        }
+      }}>
       <div className="flex justify-end sticky bottom-4">
         <DrawerTrigger asChild>
           <Button
@@ -57,49 +113,110 @@ export default function PasteDrawer() {
           </Button>
         </DrawerTrigger>
       </div>
-      <DrawerContent className="h-3/4">
-        <DrawerTitle className="mt-3 ml-3">Add your new paste</DrawerTitle>
-        <div className="h-full flex flex-col items-center mx-4">
-          <div className="w-full h-full relative">
-            <Button
-              className="absolute top-4 right-0 w-10 h-10 text-zinc-500"
-              variant="ghost"
-              size="icon"
-              onClick={handlePaste}>
-              <Clipboard />
-            </Button>
-            <Textarea
-              value={text}
-              onChange={(e) => {
-                setText(e.target.value);
-              }}
-              className="resize-none mt-4 h-full"
+      <DrawerContent className="h-5/6">
+        <DrawerTitle className="mt-4 ml-4 flex justify-center">
+          Add your new paste
+        </DrawerTitle>
+
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="h-full flex flex-col mx-4">
+            <FormField
+              control={form.control}
+              name="paste"
+              render={({ field }) => (
+                <FormItem className="resize-none mt-4 h-full">
+                  <FormControl>
+                    <Textarea className="resize-none h-full" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="flex justify-center items-center space-x-10 mb-4 mt-8">
-            <DrawerClose asChild>
-              <Button
-                onClick={() => {
-                  setText("");
-                }}
-                className="w-28"
-                size="lg"
-                variant="secondary">
-                Cancel
-              </Button>
-            </DrawerClose>
-            <DrawerClose asChild>
-              <Button
-                onClick={handleSubmit}
-                disabled={isPending || !text}
-                className="w-28"
-                size="lg"
-                variant="default">
-                Done
-              </Button>
-            </DrawerClose>
-          </div>
-        </div>
+            <FormField
+              control={form.control}
+              name="isPublic"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="mt-3 flex items-center space-x-3">
+                      <Switch
+                        id="public-switch"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                      <Label htmlFor="public-switch">make it public</Label>
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="route"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="flex items-center mt-4 space-x-3">
+                      <MotionLabel
+                        htmlFor="public-input"
+                        style={{ transformOrigin: "top" }}
+                        initial="closed"
+                        animate={form.getValues("isPublic") ? "open" : "closed"}
+                        variants={inputRouteVariants}>
+                        Route:{" "}
+                      </MotionLabel>
+                      <MotionInput
+                        id="public-input"
+                        style={{ transformOrigin: "top" }}
+                        initial="closed"
+                        animate={form.getValues("isPublic") ? "open" : "closed"}
+                        variants={inputRouteVariants}
+                        placeholder={routePlaceholder}
+                        value={field.value}
+                        onChange={field.onChange}
+                        className={
+                          !form.getValues("isPublic")
+                            ? "opacity-50 pointer-events-auto"
+                            : ""
+                        }
+                      />
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-center items-center space-x-10 mb-4 mt-8">
+              <DrawerClose asChild>
+                <Button
+                  onClick={() => {
+                    const random = generateRandomRoute();
+                    setRoutePlaceholder(random);
+                    form.reset({
+                      paste: "",
+                      isPublic: false,
+                      route: "",
+                    });
+                  }}
+                  className="w-28"
+                  size="lg"
+                  variant="secondary">
+                  Cancel
+                </Button>
+              </DrawerClose>
+              <DrawerClose asChild>
+                <Button
+                  type="submit"
+                  disabled={!form.watch("paste")}
+                  className="w-28"
+                  size="lg"
+                  variant="default">
+                  Done
+                </Button>
+              </DrawerClose>
+            </div>
+          </form>
+        </Form>
       </DrawerContent>
     </Drawer>
   );
