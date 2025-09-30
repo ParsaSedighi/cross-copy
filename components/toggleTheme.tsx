@@ -110,12 +110,19 @@ export function ToggleThemeText({
     );
   }
 
+  let isDark = false;
+  if (theme === "dark") {
+    isDark = true;
+  } else if (theme === "system") {
+    isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className="relative" variant="ghost" disabled={disabled}>
           <AnimatePresence initial={false} mode="wait">
-            {theme === "dark" ? (
+            {isDark ? (
               <MotionMoon
                 key="moon"
                 className=""
