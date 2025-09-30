@@ -47,7 +47,7 @@ export function SigninForm({ className }: { className?: string }) {
       if (result.error) {
         toast.error("Error", { description: result.error.message });
       } else {
-        toast.success("Success!", { description: result.data.message });
+        // toast.success("Success!", { description: result.data.message });
         router.push("/");
       }
     });
