@@ -1,3 +1,4 @@
+import NavbarPublic from "@/components/navbarPublic";
 import { Card, CardContent } from "@/components/ui/card";
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
@@ -19,6 +20,7 @@ export default async function PublicPaste({
 
   return (
     <main>
+      <NavbarPublic paste={paste.text} />
       <Card className="my-8 mx-4 h-full">
         <CardContent className="pt-3">{paste.text}</CardContent>
       </Card>
