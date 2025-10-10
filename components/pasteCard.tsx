@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import EditDrawer from "@/components/editDrawer";
 
 import { motion, AnimatePresence } from "motion/react";
+import Link from "next/link";
 
 const MotionCard = motion.create(Card);
 
@@ -91,21 +92,26 @@ export default function PasteCard({
               </EditDrawer>
               <TooltipContent>Edit</TooltipContent>
             </Tooltip>
-          </div>
-          {/* TEST ISPUBLIC */}
-          <Tooltip delayDuration={100} disableHoverableContent>
-            <TooltipTrigger asChild>
-              <Button variant="outline" size="icon">
+            {/* TEST ISPUBLIC */}
+            <Tooltip delayDuration={100} disableHoverableContent>
+              <TooltipTrigger asChild>
                 {paste.isPublic ? (
-                  <p className="font-bold">P</p>
+                  <Link href={`/p/${paste.route}`}>
+                    <Button variant="outline" size="icon">
+                      <p className="font-bold">P</p>
+                    </Button>
+                  </Link>
                 ) : (
-                  <p className="line-through text-muted-foreground">P</p>
+                  <Button variant="outline" size="icon">
+                    <p className="line-through text-muted-foreground">P</p>
+                  </Button>
                 )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>{paste.route}</TooltipContent>
-          </Tooltip>
-          {/* END TEST ISPUBLIC */}
+              </TooltipTrigger>
+              <TooltipContent>{paste.route}</TooltipContent>
+            </Tooltip>
+            {/* END TEST ISPUBLIC */}
+          </div>
+
           <Tooltip delayDuration={100} disableHoverableContent>
             <TooltipTrigger asChild>
               <Button
