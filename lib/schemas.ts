@@ -41,7 +41,6 @@ export const pasteSchema = z.object({
   route: z
     .string()
     .trim()
-    .optional()
     .refine(
       (val) =>
         !val ||

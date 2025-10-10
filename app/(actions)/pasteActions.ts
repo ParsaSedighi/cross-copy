@@ -22,6 +22,16 @@ export const paste = async (
 
     const result = await tryCatch(
       (async () => {
+        const found = await db.paste.findUnique({
+          where: {
+            route,
+          },
+        });
+        if (found) {
+          throw new Error(
+            "This route is already in use. Please choose another."
+          );
+        }
         const newPaste = await db.paste.create({
           data: {
             text: paste,
@@ -38,9 +48,9 @@ export const paste = async (
     if (result.error) {
       console.error("Failed to create paste:", result.error);
       return {
-        data: null,
+        data: result.data,
         error: {
-          message: "A database error occurred. Could not save the paste.",
+          message: result.error.message,
         },
       };
     }
