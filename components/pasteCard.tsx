@@ -2,22 +2,17 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { ChevronLeft, Copy, Edit, Loader2, Trash } from "lucide-react";
+
+import { ChevronLeft, Copy, Loader2, Trash, Lock } from "lucide-react";
 
 import type { Paste } from "@prisma/client";
 
 import { useEffect, useState, useTransition } from "react";
-import { deletePaste } from "@/app/(actions)/pasteActions";
+import { deletePaste, editPaste } from "@/app/(actions)/pasteActions";
 import { toast } from "sonner";
-import EditDrawer from "@/components/editDrawer";
 
 import { motion, AnimatePresence } from "motion/react";
-import Link from "next/link";
+import { Textarea } from "@/components/ui/textarea";
 
 const MotionCard = motion.create(Card);
 
@@ -30,18 +25,35 @@ export default function PasteCard({
 }) {
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
+  const [editableText, setEditableText] = useState(paste.text);
+  const [showActions, setShowActions] = useState(false);
 
   const copyHandler = async () => {
     try {
       if (!window.isSecureContext) {
         toast.error("Cannot copy!");
+        setShowActions(false);
       } else {
-        toast.success("Copied!");
         await navigator.clipboard.writeText(paste.text);
+        toast.success("Copied!");
+        setShowActions(false);
       }
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const saveHandler = () => {
+    startTransition(async () => {
+      const result = await editPaste(userId, paste.id, editableText);
+
+      if (result.error) {
+        toast.error(result.error.message);
+      } else {
+        toast.success(result.data.successMessage);
+        setIsOpen(false);
+      }
+    });
   };
 
   const deleteHandler = () => {
@@ -64,70 +76,57 @@ export default function PasteCard({
 
   return (
     <>
-      <motion.li layout className="flex space-x-4 mt-8">
-        <MotionCard
-          layoutId={`card-container-${paste.id}`}
-          onClick={() => setIsOpen(true)}
-          className="w-full cursor-pointer pt-2 px-4 min-h-52 max-h-80 overflow-hidden relative transition-colors hover:bg-muted/50">
-          <p className="text-sm pointer-events-none">{paste.text}</p>
-        </MotionCard>
+      <motion.li layout className="flex space-x-4 mt-8 z-0">
+        <div className="relative w-full overflow-visible">
+          <motion.div
+            drag="x"
+            dragConstraints={{ left: -44, right: 0 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -30) {
+                setShowActions(true);
+              } else {
+                setShowActions(false);
+              }
+            }}
+            animate={{ x: showActions ? -44 : 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className={showActions ? "relative z-10" : "relative z-0"}>
+            <MotionCard
+              layoutId={`card-container-${paste.id}`}
+              onClick={(e) => {
+                if (!showActions) {
+                  setIsOpen(true);
+                }
+              }}
+              className="w-full cursor-pointer pt-2 px-4 min-h-52 max-h-80 overflow-hidden relative transition-colors hover:bg-muted/50">
+              <p className="text-sm pointer-events-none">{paste.text}</p>
+              {!paste.isPublic && (
+                <div className="absolute top-2 right-2">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                </div>
+              )}
+            </MotionCard>
+          </motion.div>
 
-        <div className="flex flex-col justify-between space-y-2">
-          <div className="space-y-2 flex flex-col">
-            <Tooltip delayDuration={100} disableHoverableContent>
-              <TooltipTrigger asChild>
-                <Button onClick={copyHandler} variant="outline" size="icon">
-                  <Copy />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Copy</TooltipContent>
-            </Tooltip>
-            <Tooltip delayDuration={100} disableHoverableContent>
-              <EditDrawer userId={userId} prevtext={paste}>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <Edit />
-                  </Button>
-                </TooltipTrigger>
-              </EditDrawer>
-              <TooltipContent>Edit</TooltipContent>
-            </Tooltip>
-            {/* TEST ISPUBLIC */}
-            <Tooltip delayDuration={100} disableHoverableContent>
-              <TooltipTrigger asChild>
-                {paste.isPublic ? (
-                  <Link href={`/p/${paste.route}`}>
-                    <Button variant="outline" size="icon">
-                      <p className="font-bold">P</p>
-                    </Button>
-                  </Link>
-                ) : (
-                  <Button variant="outline" size="icon">
-                    <p className="line-through text-muted-foreground">P</p>
-                  </Button>
-                )}
-              </TooltipTrigger>
-              <TooltipContent>{paste.route}</TooltipContent>
-            </Tooltip>
-            {/* END TEST ISPUBLIC */}
+          <div
+            className={`absolute top-0 right-0 h-full w-11 flex flex-col justify-center space-y-2 px-2 bg-background ${
+              showActions ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}>
+            <Button onClick={copyHandler} variant="outline" size="icon">
+              <Copy />
+            </Button>
+            <Button
+              className="hover:bg-destructive hover:text-destructive-foreground"
+              onClick={deleteHandler}
+              variant="outline"
+              size="icon">
+              {isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Trash className="h-4 w-4" />
+              )}
+            </Button>
           </div>
-
-          <Tooltip delayDuration={100} disableHoverableContent>
-            <TooltipTrigger asChild>
-              <Button
-                className="hover:bg-destructive hover:text-destructive-foreground"
-                onClick={deleteHandler}
-                variant="outline"
-                size="icon">
-                {isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Trash className="h-4 w-4" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete</TooltipContent>
-          </Tooltip>
         </div>
       </motion.li>
 
@@ -146,7 +145,7 @@ export default function PasteCard({
                 transition: { delay: 0.15, duration: 0.3 },
               }}
               exit={{ opacity: 0, transition: { duration: 0.1 } }}>
-              {/* --- MODAL HEADER (Close Button) --- */}
+              {/* --- MODAL HEADER --- */}
               <div className="flex justify-start mb-4">
                 <Button
                   variant="ghost"
@@ -154,17 +153,23 @@ export default function PasteCard({
                   onClick={() => setIsOpen(false)}>
                   <ChevronLeft className="h-5 w-5" />
                 </Button>
-                <div className="flex flex-grow justify-end">
-                  <Button variant="outline" onClick={copyHandler}>
+                <div className="flex flex-grow justify-end space-x-2">
+                  <Button variant="outline" size="icon" onClick={copyHandler}>
                     <Copy />
-                    Copy
+                  </Button>
+                  <Button variant="outline" onClick={saveHandler}>
+                    Save
                   </Button>
                 </div>
               </div>
 
               {/* --- MODAL CONTENT --- */}
-              <div className="flex-1 w-full overflow-y-auto pr-2">
-                <p className="whitespace-pre-wrap break-words">{paste.text}</p>
+              <div className="flex-1 w-full overflow-y-auto">
+                <Textarea
+                  className="w-full h-full resize-none whitespace-pre-wrap break-words p-2"
+                  value={editableText}
+                  onChange={(e) => setEditableText(e.target.value)}
+                />
               </div>
             </motion.div>
           </motion.div>
