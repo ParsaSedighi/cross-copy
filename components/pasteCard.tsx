@@ -81,6 +81,7 @@ export default function PasteCard({
           <motion.div
             drag="x"
             dragConstraints={{ left: -44, right: 0 }}
+            dragElastic={0}
             onDragEnd={(_, info) => {
               if (info.offset.x < -30) {
                 setShowActions(true);
@@ -107,26 +108,29 @@ export default function PasteCard({
               )}
             </MotionCard>
           </motion.div>
-
-          <div
-            className={`absolute top-0 right-0 h-full w-11 flex flex-col justify-center space-y-2 px-2 bg-background ${
-              showActions ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}>
-            <Button onClick={copyHandler} variant="outline" size="icon">
-              <Copy />
-            </Button>
-            <Button
-              className="hover:bg-destructive hover:text-destructive-foreground"
-              onClick={deleteHandler}
-              variant="outline"
-              size="icon">
-              {isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Trash className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+          {showActions && (
+            <motion.div
+              className={`absolute py-4 top-0 right-0 h-full w-11 flex flex-col justify-between space-y-2 px-2 bg-background ${
+                !showActions && "pointer-events-none"
+              }`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 100 }}>
+              <Button onClick={copyHandler} variant="outline" size="icon">
+                <Copy />
+              </Button>
+              <Button
+                className="hover:bg-destructive hover:text-destructive-foreground"
+                onClick={deleteHandler}
+                variant="outline"
+                size="icon">
+                {isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash className="h-4 w-4" />
+                )}
+              </Button>
+            </motion.div>
+          )}
         </div>
       </motion.li>
 
