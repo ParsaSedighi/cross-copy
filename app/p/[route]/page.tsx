@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 export default async function PublicPaste({
   params,
 }: {
-  params: { route: string };
+  params: Promise<{ route: string }>;
 }) {
   const { route } = await params;
 
